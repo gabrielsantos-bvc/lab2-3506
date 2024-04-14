@@ -1,0 +1,34 @@
+<div class="card shadow mb-4">
+  <div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold text-primary"><%= @course.name %></h6>
+  </div>
+  <div class="card-body">
+    <%= @course.description %>
+  </div>
+
+
+</div>
+<div id="paypal-button-container"></div>
+<% content_for :javascript do %>
+  <script src="https://www.paypal.com/sdk/js?client-id=AYMQBnqr7jOes4z7pJ2gp5wl_7oXEn2kaFQMVfK2khIuBEahi6bDdfz-Jmxu2gAJrwUNIUL2xxeNM8dL"></script>
+
+  <script>
+  paypal.Buttons({
+    createOrder: function(data, actions) {
+    return actions.order.create({
+     purchase_units: [{
+      amount: {
+        value: "<%= @course.price %>"
+      }
+    }]
+  });
+  },
+    onApprove: function(data, actions) {
+      return actions.order.capture().then(function(details) {
+        alert('Transaction completed by ' + details.payer.name.given_name);
+        $.post('/courses/<%= @course.id %>/create_order');
+      });
+    }
+  }).render('#paypal-button-container');
+  </script>
+<% end %>

@@ -35,7 +35,7 @@ pipeline {
         sh "scp -i $SSH_KEY docker-compose.yml $SSH_USER@$EC2_INSTANCE_IP:~/"
       }
 
-      // SSH into EC2 instance and start the Docker containers
+      //SSH into EC2 instance and start the Docker containers
       sshagent(credentials: ['SSH_KEY']) {
         sh "ssh -i $SSH_KEY $SSH_USER@$EC2_INSTANCE_IP 'docker-compose -f ~/docker-compose.yml up -d'"
       }

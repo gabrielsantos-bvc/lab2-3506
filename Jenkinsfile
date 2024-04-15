@@ -16,7 +16,7 @@ pipeline {
             steps {
                 script {
                     // Build the Docker image
-                    sh "docker build -t $DOCKER_IMAGE_NAME ."
+                    sh "docker build -t gabrielsantosbvc/$DOCKER_IMAGE_NAME:latest ."
                 }
             }
         }
@@ -27,7 +27,7 @@ pipeline {
                     // Push the Docker image to a registry
                     withCredentials([string(credentialsId: 'docker-hub-credentials', variable: 'DOCKER_HUB_CREDENTIALS')]) {
                         sh "docker login -u gabrielsantosbvc -p $DOCKER_HUB_CREDENTIALS"
-                        sh "docker push $DOCKER_IMAGE_NAME"
+                        sh "docker push gabrielsantosbvc/$DOCKER_IMAGE_NAME:latest"
                     }
                 }
             }

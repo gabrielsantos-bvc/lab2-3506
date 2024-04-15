@@ -25,8 +25,8 @@ pipeline {
             steps {
                 script {
                     // Push the Docker image to a registry
-                    withCredentials([string(credentialsId: 'docker-hub-credentials', variable: 'DOCKER_HUB_CREDENTIALS')]) {
-                        sh "docker login -u gabrielsantosbvc -p $DOCKER_HUB_CREDENTIALS"
+                    withCredentials([string(credentialsId: 'docker-hub-credentials', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+                        sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
                         sh "docker push gabrielsantosbvc/$DOCKER_IMAGE_NAME:latest"
                     }
                 }

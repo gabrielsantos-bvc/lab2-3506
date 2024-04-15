@@ -17,28 +17,28 @@ pipeline {
         sh "docker build -t gabrielsantosbvc/$DOCKER_IMAGE_NAME:latest ."
       }
     }
-  }
 
-  stage('Push Docker Image') {
-    steps {
-      // Push the Docker image to a registry
-      withCredentials([string(credentialsId: 'docker-hub-credentials', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
-        sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
-        sh "docker push gabrielsantosbvc/$DOCKER_IMAGE_NAME:latest"
+    stage('Push Docker Image') {
+      steps {
+        // Push the Docker image to a registry
+        withCredentials([string(credentialsId: 'docker-hub-credentials', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+          sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
+          sh "docker push gabrielsantosbvc/$DOCKER_IMAGE_NAME:latest"
+        }
       }
     }
-  }
 
-  stage('Deploy to EC2') {
-    steps {
-      // Copy Docker Compose file and SSH key to EC2 instance
-      sshagent(credentials: ['SSH_KEY']) {
-        sh "scp -i $SSH_KEY docker-compose.yml $SSH_USER@$EC2_INSTANCE_IP:~/"
-      }
+    stage('Deploy to EC2') {
+      steps {
+        // Copy Docker Compose file and SSH key to EC2 instance
+        sshagent(credentials: ['SSH_KEY']) {
+          sh "scp -i $SSH_KEY docker-compose.yml $SSH_USER@$EC2_INSTANCE_IP:~/"
+        }
 
-      //SSH into EC2 instance and start the Docker containers
-      sshagent(credentials: ['SSH_KEY']) {
-        sh "ssh -i $SSH_KEY $SSH_USER@$EC2_INSTANCE_IP 'docker-compose -f ~/docker-compose.yml up -d'"
+        //SSH into EC2 instance and start the Docker containers
+        sshagent(credentials: ['SSH_KEY']) {
+          sh "ssh -i $SSH_KEY $SSH_USER@$EC2_INSTANCE_IP 'docker-compose -f ~/docker-compose.yml up -d'"
+        }
       }
     }
   }

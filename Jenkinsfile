@@ -17,6 +17,7 @@ pipeline {
         sh "docker build -t gabrielsantosbvc/$DOCKER_IMAGE_NAME:latest ."
       }
     }
+  }
 
   stage('Push Docker Image') {
     steps {
